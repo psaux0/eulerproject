@@ -1,0 +1,21 @@
+ 2 down vote
+	
+
+Let n < d, and you're trying to figure out the repeating part of n/d. Let p be the number of digits in the repeating part: then n/d = R * 10^(-p) + R * 10^(-2p) + ... = R * ((10^-p)^1 + (10^-p)^2 + ...). The bracketed part is a geometric series, equal to 1/(10^p - 1).
+
+So n / d = R / (10^p - 1). Rearrange to get R = n * (10^p - 1) / d. To find R, loop p from 1 to infinity, and stop as soon as d evenly divides n * (10^p - 1).
+
+Here's an implementation in Python:
+
+def f(n, d):
+    x = n * 9
+    z = x
+    k = 1
+    while z % d:
+        z = z * 10 + x
+        k += 1
+    return k, z / d
+
+(k keeps track of the length of the repeating sequence, so you can distinguish between 1/9 and 1/99, for example)
+
+Note that this implementation (ironically) loops forever if the decimal expansion is finite, but terminates if it's infinite! You can check for this case, though, because n/d will only have a finite decimal representation if all the prime factors of d that aren't 2 or 5 are also present in n.
